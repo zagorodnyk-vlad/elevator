@@ -1,6 +1,4 @@
-import ch.qos.logback.classic.spi.LoggingEvent;
-import org.junit.After;
-import org.junit.Before;
+import loger.TestLogger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -10,23 +8,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ElevatorServiceTest extends AbstractUnitTest {
+public class ElevatorServiceTest {
 
-    ElevatorService elevatorService= new ElevatorService();
+    TestLogger myLog = new TestLogger();
+    ElevatorService elevatorService = new ElevatorService(myLog);
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void afterTest(){
-        super.afterTest();
-    }
 
     @Test
     public void moving() throws InterruptedException {
@@ -58,10 +47,30 @@ public class ElevatorServiceTest extends AbstractUnitTest {
         elevator.setLocation(1L);
         elevator.setFloorStopEnterToElevator(new HashSet<>(Arrays.asList(1L, 2L, 4L)));
 
-        elevatorService.moving(elevator,users);
-//         For testing log message
-        LoggingEvent loggingEvent = getLoggingEvent();
-        assertThat(loggingEvent.getLevel().levelStr.equals("INFO"));
-        assertThat(loggingEvent.getMessage()).containsIgnoringCase("");
+        elevatorService.moving(elevator, users);
+        List answer = myLog.getList();
+        assertThat(answer.size()).isEqualTo(17);
+        assertThat(answer.get(0)).isEqualTo("Лифт остановился на 1 этаже");
+        assertThat(answer.get(5)).isEqualTo("Лифт на 2этаже двигается вверх");
+        assertThat(answer.get(16)).isEqualTo("Third ввышел из лифта на этаже 1");
+
+
     }
 }
+//        Лифт остановился на 1 этаже
+//        First ввошел в лифт на этаже 1
+//        Лифт на 1этаже двигается вверх
+//        Лифт остановился на 2 этаже
+//        Second ввошел в лифт на этаже 2
+//        Лифт на 2этаже двигается вверх
+//        Лифт остановился на 3 этаже
+//        Second ввышел из лифта на этаже 3
+//        Лифт на 3этаже двигается вверх
+//        Лифт остановился на 4 этаже
+//        Third ввошел в лифт на этаже 4
+//        First ввышел из лифта на этаже 4
+//        Лифт на 4этаже двигается вниз
+//        Лифт на 3этаже двигается вниз
+//        Лифт на 2этаже двигается вниз
+//        Лифт остановился на 1 этаже
+//        Third ввышел из лифта на этаже 1

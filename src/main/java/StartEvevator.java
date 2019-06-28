@@ -1,3 +1,5 @@
+import loger.LoggerProd;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,7 +34,7 @@ public class StartEvevator {
         elevator.setDirection(Direction.UP);
         elevator.setLocation(1L);
         elevator.setFloorStopEnterToElevator(new HashSet<>(Arrays.asList(1L, 2L, 4L)));
-        new ElevatorService().moving(elevator, users);
+        new ElevatorService(new LoggerProd()).moving(elevator, users);
     }
 
 }
